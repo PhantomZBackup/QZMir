@@ -108,7 +108,7 @@ jobs:
         uses: actions/cache@v3
         id: cache
         with:
-          path: ${GITHUB_WORKSPACE}/EncToolZ
+          path: EncToolZ
           key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
       - name: Checkout private tools
         if: steps.cache.outputs.cache-hit != 'true'
@@ -163,7 +163,7 @@ jobs:
         uses: actions/cache@v3
         id: cache
         with:
-          path: ${GITHUB_WORKSPACE}/EncToolZ
+          path: EncToolZ
           key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
       - name: Checkout private tools
         if: steps.cache.outputs.cache-hit != 'true'
@@ -214,7 +214,7 @@ jobs:
         uses: actions/cache@v3
         id: cache
         with:
-          path: ${GITHUB_WORKSPACE}/EncToolZ
+          path: EncToolZ
           key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
       - name: Checkout private tools
         if: env.APIState == 'merge' && steps.cache.outputs.cache-hit != 'true'
