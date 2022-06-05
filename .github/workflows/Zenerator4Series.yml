@@ -1,0 +1,106 @@
+name: "Series Zenerator"
+
+on:
+  workflow_dispatch:
+    inputs:
+      Season:
+        description: "Season"
+        required: true
+        type: choice
+        options:
+        - "01"
+        - "02"
+        - "03"
+        - "04"
+      EpNum:
+        description: "EpNum"
+        required: true
+        type: choice
+        options:
+        - "01"
+        - "02"
+        - "03"
+        - "04"
+        - "05"
+        - "06"
+        - "07"
+        - "08"
+        - "09"
+        - "10"
+        - "11"
+        - "12"
+        - "13"
+        - "14"
+        - "15"
+        - "16"
+        - "17"
+        - "18"
+        - "19"
+        - "20"
+        - "21"
+        - "22"
+        - "23"
+        - "24"
+        - "25"
+        - "26"
+      GenAud:
+        description: "Generate Audio"
+        required: false
+        type: boolean
+        default: true
+
+env:
+  SOURCERY: ${{ secrets.SOURCERY }}
+  SauceLocationOnIndex: "td:/MiraculouSauce"
+  LocationOnIndex: "td:/MiraculouSourceryZ"
+  AudLocationOnIndex: "td:/MiraculouSourceryAudZ"
+  Variant: "Series"
+  Season: ${{ github.event.inputs.Season }}
+  EpNum: ${{ github.event.inputs.EpNum }}
+  SubLocation: "S${{ github.event.inputs.Season }}E${{ github.event.inputs.EpNum }}"
+  GenAud: ${{ github.event.inputs.GenAud }}
+  RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
+  RCLONE_INSTALL_MIRROR: ${{ secrets.RCLONE_INSTALL_MIRROR }}
+  FTOOL_ARC_URL: ${{ secrets.FTOOL_ARC_URL }}
+  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
+  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
+
+jobs:
+
+  generator:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Invoke Gatekeeper
+        run: |
+          if ! grep -q "${SubLocation}" "Z.EpList.txt"; then
+            printf "[!] This Episode in the %s Does Not Exist, Quitting The Job.\n" "${SubLocation}"
+            exit 1
+          fi
+      - name: EncToolZ Cache
+        if: success()
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${GITHUB_WORKSPACE}/EncToolZ
+          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
+      - name: Checkout private tools
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: ZeoRexDevs/EncToolZ
+          token: ${{ secrets.GH_TOKEN }}
+          path: EncToolZ
+      - name: Fix EncToolZ Permissions
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: Chunk+Audio Generator for ${{env.SubLocation}}
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./59-EncGen-a96b51ea4b58
