@@ -1,0 +1,242 @@
+name: "Series on AV01"
+
+on:
+  workflow_dispatch:
+    inputs:
+      Season:
+        description: "Season"
+        required: true
+        type: choice
+        options:
+        - "01"
+        - "02"
+        - "03"
+        - "04"
+      EpNum:
+        description: "EpNum"
+        required: true
+        type: choice
+        options:
+        - "01"
+        - "02"
+        - "03"
+        - "04"
+        - "05"
+        - "06"
+        - "07"
+        - "08"
+        - "09"
+        - "10"
+        - "11"
+        - "12"
+        - "13"
+        - "14"
+        - "15"
+        - "16"
+        - "17"
+        - "18"
+        - "19"
+        - "20"
+        - "21"
+        - "22"
+        - "23"
+        - "24"
+        - "25"
+        - "26"
+      JobSequence:
+        description: "JobSequence"
+        required: true
+        type: number
+        default: 0
+      SpeedProf:
+        description: "SpeedProfile"
+        required: true
+        type: choice
+        options:
+        - "2"
+        - "3"
+      Resolution:
+        description: "Resolution"
+        required: true
+        type: choice
+        options:
+        - "576"
+        - "450"
+      Purpose:
+        description: "Purpose"
+        required: true
+        type: choice
+        options:
+        - arc
+        - ren
+
+env:
+  SOURCERY: ${{ secrets.SOURCERY }}
+  LocationOnIndex: "td:/MiraculouSourceryZ"
+  R3NC0D3R: "AV01"
+  Variant: "Series"
+  Season: ${{ github.event.inputs.Season }}
+  EpNum: ${{ github.event.inputs.EpNum }}
+  SubLocation: "S${{ github.event.inputs.Season }}E${{ github.event.inputs.EpNum }}"
+  InFilePrefix: "Miraculous.Tales.of.Ladybug.and.Cat.Noir.S${{ github.event.inputs.Season }}E${{ github.event.inputs.EpNum }}"
+  JobSequence: ${{ github.event.inputs.JobSequence }}
+  SpeedProf: ${{ github.event.inputs.SpeedProf }}
+  Resolution: ${{ github.event.inputs.Resolution }}
+  Purpose: ${{ github.event.inputs.Purpose }}
+  RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
+  RCLONE_INSTALL_MIRROR: ${{ secrets.RCLONE_INSTALL_MIRROR }}
+  FTOOL_ARC_URL: ${{ secrets.FTOOL_ARC_URL }}
+  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
+  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
+
+jobs:
+
+  primary:
+    runs-on: ubuntu-latest
+
+    outputs:
+      FrameRate: ${{ steps.set-params.outputs.FrameRate }}
+      ExactFrameRate: ${{ steps.set-params.outputs.ExactFrameRate }}
+      GOPSize: ${{ steps.set-params.outputs.GOPSize }}
+      GOPType: ${{ steps.set-params.outputs.GOPType }}
+      APIState: ${{ steps.set-params.outputs.APIState }}
+      finalChunk: ${{ steps.set-params.outputs.finalChunk }}
+      matrix: ${{ steps.set-params.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: EncToolZ Cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${GITHUB_WORKSPACE}/EncToolZ
+          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
+      - name: Checkout private tools
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: ZeoRexDevs/EncToolZ
+          token: ${{ secrets.GH_TOKEN }}
+          path: EncToolZ
+      - name: Fix EncToolZ Permissions
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: Create EncMatrix
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./41-EncMtrx-9006e1ebae5b
+      - name: Pass Parameters to EncMatrix
+        id: set-params
+        run: |
+          echo "::set-output name=FrameRate::${FrameRate}"
+          echo "::set-output name=ExactFrameRate::${ExactFrameRate}"
+          echo "::set-output name=GOPSize::${GOPSize}"
+          echo "::set-output name=GOPType::${GOPType}"
+          echo "::set-output name=APIState::${APIState}"
+          echo "::set-output name=finalChunk::${finalChunk}"
+          echo "::set-output name=matrix::${matrix}"
+
+  enc_av01:
+    runs-on: ubuntu-latest
+    needs: primary
+
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        ChunkNum: ${{fromJson(needs.primary.outputs.matrix)}}
+
+    env:
+      ChunkNum: ${{ matrix.ChunkNum }}
+      FrameRate: ${{ needs.primary.outputs.FrameRate }}
+      ExactFrameRate: ${{ needs.primary.outputs.ExactFrameRate }}
+      GOPType: ${{ needs.primary.outputs.GOPType }}
+      GOPSize: ${{ needs.primary.outputs.GOPSize }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: EncToolZ Cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${GITHUB_WORKSPACE}/EncToolZ
+          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
+      - name: Checkout private tools
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: ZeoRexDevs/EncToolZ
+          token: ${{ secrets.GH_TOKEN }}
+          path: EncToolZ
+      - name: Fix EncToolZ Permissions
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: AV01 R3NC0D3R - Chunk_${{env.ChunkNum}} of ${{env.SubLocation}}
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./68-EncPreWr-a3327ad30631
+          DEOBFUS ./71-EncX-809baa03fd72
+          DEOBFUS ./79-EncVT-49f0802dcf27
+          if [[ ${R3C0D3} == 'true' ]]; then
+            DEOBFUS ./71-EncX-809baa03fd72
+          fi
+
+  postEnc:
+    runs-on: ubuntu-latest
+    needs: [primary, enc_av01]
+
+    env:
+      APIState: ${{ needs.primary.outputs.APIState }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Trigger Another Workflow
+        if: env.APIState == 'trigger'
+        env:
+          GH_TOKEN2: ${{ secrets.GH_TOKEN2 }}
+          GH_TOKEN3: ${{ secrets.GH_TOKEN3 }}
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./99-EncZ-948448f0c76f
+      - name: EncToolZ Cache
+        if: env.APIState == 'merge'
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${GITHUB_WORKSPACE}/EncToolZ
+          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
+      - name: Checkout private tools
+        if: env.APIState == 'merge' && steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+        with:
+          repository: ZeoRexDevs/EncToolZ
+          token: ${{ secrets.GH_TOKEN }}
+          path: EncToolZ
+      - name: Fix EncToolZ Permissions
+        if: env.APIState == 'merge'
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: Merge Whole Episode - ${{env.SubLocation}}
+        if: env.APIState == 'merge'
+        env:
+          GOPType: ${{ needs.primary.outputs.GOPType }}
+          finalChunk: ${{ needs.primary.outputs.finalChunk }}
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./91-EncMr-db991ece1d25
