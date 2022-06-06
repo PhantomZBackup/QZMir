@@ -159,14 +159,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: EncToolZ Cache
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: EncToolZ
-          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
       - name: Checkout private tools
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
         with:
           repository: ZeoRexDevs/EncToolZ
