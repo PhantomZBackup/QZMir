@@ -80,22 +80,23 @@ jobs:
             printf "[!] This Episode in the %s Does Not Exist, Quitting The Job.\n" "${SubLocation}"
             exit 1
           fi
-      - name: EncToolZ Cache
+      - uses: rokibhasansagar/custom_workflows/git_config@main
         if: success()
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: EncToolZ
-          key: ${{ runner.os }}-${{ hashFiles('.github/cache_timestamp') }}
-      - name: Checkout private tools
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
-        with:
-          repository: ZeoRexDevs/EncToolZ
-          ref: 'main'
-          token: ${{ secrets.GH_TOKEN }}
-          path: EncToolZ
-      - name: Fix EncToolZ Permissions
+        env:
+          PAT: ${{ secrets.GH_TOKEN }}
+      - name: Checkout EncToolZ
+        if: success() && env.GenAud != 'true'
+        env:
+          ReqdEncToolZ: "mtools rtools"
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: Checkout EncToolZ
+        if: success() && env.GenAud == 'true'
+        env:
+          ReqdEncToolZ: "ftools mtools rtools"
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
           echo "$SOURCERY" | base64 -d > SOURCERY
