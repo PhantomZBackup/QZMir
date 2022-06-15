@@ -70,7 +70,6 @@ on:
         type: choice
         options:
         - arc
-        - ren
 
 env:
   SOURCERY: ${{ secrets.SOURCERY }}
@@ -86,8 +85,6 @@ env:
   Resolution: ${{ github.event.inputs.Resolution }}
   Purpose: ${{ github.event.inputs.Purpose }}
   RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
-  RCLONE_INSTALL_MIRROR: ${{ secrets.RCLONE_INSTALL_MIRROR }}
-  FTOOL_ARC_URL: ${{ secrets.FTOOL_ARC_URL }}
   FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
   FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
 
@@ -106,7 +103,8 @@ jobs:
       matrix: ${{ steps.set-params.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
-      - uses: rokibhasansagar/custom_workflows/git_config@main
+      - name: Set GitHub Auth
+        uses: rokibhasansagar/custom_workflows/git_config@main
         env:
           PAT: ${{ secrets.GH_TOKEN }}
       - name: Checkout EncToolZ
@@ -153,7 +151,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: rokibhasansagar/custom_workflows/git_config@main
+      - name: Set GitHub Auth
+        uses: rokibhasansagar/custom_workflows/git_config@main
         env:
           PAT: ${{ secrets.GH_TOKEN }}
       - name: Checkout EncToolZ
@@ -191,7 +190,8 @@ jobs:
           echo "$SOURCERY" | base64 -d > SOURCERY
           source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./99-EncZ-948448f0c76f
-      - uses: rokibhasansagar/custom_workflows/git_config@main
+      - name: Set GitHub Auth
+        uses: rokibhasansagar/custom_workflows/git_config@main
         if: env.APIState == 'merge'
         env:
           PAT: ${{ secrets.GH_TOKEN }}
