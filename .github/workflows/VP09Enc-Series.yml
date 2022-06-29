@@ -70,11 +70,6 @@ on:
         options:
         - arc
         - ren
-      AddWatermark:
-        description: "Watermark Addition"
-        required: false
-        type: boolean
-        default: false
 
 env:
   SOURCERY: ${{ secrets.SOURCERY }}
@@ -153,7 +148,6 @@ jobs:
       ExactFrameRate: ${{ needs.primary.outputs.ExactFrameRate }}
       GOPType: ${{ needs.primary.outputs.GOPType }}
       GOPSize: ${{ needs.primary.outputs.GOPSize }}
-      AddWatermark: ${{ github.event.inputs.AddWatermark }}
 
     steps:
       - uses: actions/checkout@v3
