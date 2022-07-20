@@ -1,0 +1,87 @@
+name: "Special Zenerator"
+
+on:
+  workflow_dispatch:
+    inputs:
+      GeoCode:
+        description: "GeoCode"
+        required: true
+        type: choice
+        options:
+        - NewYork
+        - Shanghai
+      GenVid:
+        description: "Generate Video"
+        required: false
+        type: boolean
+        default: true
+      GenAud:
+        description: "Generate Audio"
+        required: false
+        type: boolean
+        default: true
+
+env:
+  SOURCERY: ${{ secrets.SOURCERY }}
+  StreamSauceLocationOnIndex: "td:/MiraculouStreamSauceZ"
+  SauceLocationOnIndex: "td:/MiraculouSauce"
+  LocationOnIndex: "td:/MiraculouSourceryZ"
+  AudLocationOnIndex: "td:/MiraculouSourceryAudZ"
+  Variant: "Special"
+  GeoCode: ${{ github.event.inputs.GeoCode }}
+  SubLocation: "Sp0${{ github.event.inputs.GeoCode }}"
+  GenVid: ${{ github.event.inputs.GenVid }}
+  GenAud: ${{ github.event.inputs.GenAud }}
+  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
+  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
+
+jobs:
+
+  generator:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: 'main'
+      - name: Invoke Gatekeeper
+        run: |
+          if ! grep -q "${SubLocation}" "Z.EpList.txt"; then
+            printf "[!] This Special in the %s Does Not Exist, Quitting The Job.\n" "${SubLocation}"
+            exit 1
+          fi
+      - name: Set GitHub Auth
+        uses: rokibhasansagar/custom_workflows/git_config@main
+        if: success()
+        env:
+          PAT: ${{ secrets.GH_TOKEN }}
+      - name: Checkout EncToolZ
+        if: success()
+        env:
+          ReqdEncToolZ: "ftools mtools rtools"
+          RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./21-EncTool-b473ab7b69f5
+      - name: Prepare StreamSauce
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./33-EncPrepG-d430caa87450
+      - name: VidStreamSauce Splitter
+        if: env.GenVid == 'true'
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./39-EncSplt-3766d239ff07
+      - name: AudStreamSauce REncoder
+        if: env.GenAud == 'true'
+        run: |
+          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY
+          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          DEOBFUS ./43-EncAud-9bb41cb96449
