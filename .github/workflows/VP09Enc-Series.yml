@@ -101,6 +101,7 @@ jobs:
       APIState: ${{ steps.set-params.outputs.APIState }}
       finalChunk: ${{ steps.set-params.outputs.finalChunk }}
       matrix: ${{ steps.set-params.outputs.matrix }}
+      safile_json: ${{ steps.set-params.outputs.safile_json }}
     steps:
       - uses: actions/checkout@v3
       - name: Set GitHub Auth
@@ -124,6 +125,7 @@ jobs:
       - name: Pass Parameters to EncMatrix
         id: set-params
         run: |
+          echo "[i] Passing Parameters to EncMatrix..."
           echo "::set-output name=FrameRate::${FrameRate}"
           echo "::set-output name=ExactFrameRate::${ExactFrameRate}"
           echo "::set-output name=GOPSize::${GOPSize}"
@@ -131,6 +133,7 @@ jobs:
           echo "::set-output name=APIState::${APIState}"
           echo "::set-output name=finalChunk::${finalChunk}"
           echo "::set-output name=matrix::${matrix}"
+          echo "::set-output name=safile_json::${safile_json}"
 
   enc_vp09:
     runs-on: ubuntu-latest
@@ -158,6 +161,7 @@ jobs:
       - name: Checkout EncToolZ
         env:
           ReqdEncToolZ: "ftools rtools"
+          safile_json: ${{ needs.primary.outputs.safile_json }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
           echo "$SOURCERY" | base64 -d > SOURCERY
@@ -203,6 +207,7 @@ jobs:
         if: env.APIState == 'merge'
         env:
           ReqdEncToolZ: "mtools rtools"
+          safile_json: ${{ needs.primary.outputs.safile_json }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
           echo "$SOURCERY" | base64 -d > SOURCERY
