@@ -104,6 +104,8 @@ jobs:
       safile_json: ${{ steps.set-params.outputs.safile_json }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: "main"
       - name: Set GitHub Auth
         uses: rokibhasansagar/custom_workflows/git_config@main
         env:
@@ -154,6 +156,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: "main"
       - name: Set GitHub Auth
         uses: rokibhasansagar/custom_workflows/git_config@main
         env:
@@ -188,6 +192,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: "main"
       - name: Trigger Another Workflow
         if: env.APIState == 'trigger'
         env:
