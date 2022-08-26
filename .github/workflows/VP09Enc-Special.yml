@@ -57,7 +57,7 @@ env:
 jobs:
 
   primary:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     outputs:
       FrameRate: ${{ steps.set-params.outputs.FrameRate }}
@@ -102,7 +102,7 @@ jobs:
           echo "::set-output name=safile_json::${safile_json}"
 
   enc_vp09:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: primary
 
     strategy:
@@ -146,7 +146,7 @@ jobs:
           fi
 
   postEnc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [primary, enc_vp09]
 
     env:
