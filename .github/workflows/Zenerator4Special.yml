@@ -32,8 +32,6 @@ env:
   SubLocation: "Sp0${{ github.event.inputs.GeoCode }}"
   GenVid: ${{ github.event.inputs.GenVid }}
   GenAud: ${{ github.event.inputs.GenAud }}
-  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
-  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
 
 jobs:
 
@@ -62,26 +60,26 @@ jobs:
           RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./21-EncTool-b473ab7b69f5
       - name: Prepare StreamSauce
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./33-EncPrepG-d430caa87450
       - name: VidStreamSauce Splitter
         if: env.GenVid == 'true'
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./39-EncSplt-3766d239ff07
       - name: AudStreamSauce REncoder
         if: env.GenAud == 'true'
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./43-EncAud-9bb41cb96449

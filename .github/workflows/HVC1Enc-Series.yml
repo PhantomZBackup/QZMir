@@ -85,8 +85,6 @@ env:
   Resolution: ${{ github.event.inputs.Resolution }}
   Purpose: ${{ github.event.inputs.Purpose }}
   RCLONE_CONFIG_URL: ${{ secrets.RCLONE_CONFIG_URL }}
-  FTOOL_CONVERTER: ${{ secrets.FTOOL_CONVERTER }}
-  FTOOL_PROBER: ${{ secrets.FTOOL_PROBER }}
 
 jobs:
 
@@ -115,14 +113,14 @@ jobs:
           ReqdEncToolZ: "rtools"
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./21-EncTool-b473ab7b69f5
       - name: Create EncMatrix
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./41-EncMtrx-9006e1ebae5b
       - name: Pass Parameters to EncMatrix
         id: set-params
@@ -168,14 +166,14 @@ jobs:
           safile_json: ${{ needs.primary.outputs.safile_json }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./21-EncTool-b473ab7b69f5
       - name: HVC1 R3NC0D3R - Chunk_${{env.ChunkNum}} of ${{env.SubLocation}} - AIO
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./68-EncPreWr-a3327ad30631
           DEOBFUS ./72-EncX-ae3aca956963
 
@@ -197,8 +195,8 @@ jobs:
           GH_TOKEN3: ${{ secrets.GH_TOKEN3 }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./99-EncZ-948448f0c76f
       - name: Set GitHub Auth
         uses: rokibhasansagar/custom_workflows/git_config@main
@@ -212,8 +210,8 @@ jobs:
           safile_json: ${{ needs.primary.outputs.safile_json }}
         run: |
           eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./21-EncTool-b473ab7b69f5
       - name: Merge Whole Episode - ${{env.SubLocation}}
         if: env.APIState == 'merge'
@@ -221,7 +219,7 @@ jobs:
           GOPType: ${{ needs.primary.outputs.GOPType }}
           finalChunk: ${{ needs.primary.outputs.finalChunk }}
         run: |
-          eval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
-          echo "$SOURCERY" | base64 -d > SOURCERY
-          source ./SOURCERY &>/dev/null && rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
+          eveval 'set -eo pipefail' 2>/dev/null && eval 'set +o history' 2>/dev/null
+          echo "$SOURCERY" | base64 -d > SOURCERY && source ./SOURCERY &>/dev/null
+          rm -f ./SOURCERY && eval 'set -o history' 2>/dev/null
           DEOBFUS ./91-EncMr-db991ece1d25
